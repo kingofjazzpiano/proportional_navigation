@@ -12,12 +12,10 @@ onready var fps_label = get_node("/root/Main/DebugPanel/FPS")
 
 onready var player = get_node("/root/Main/Player")
 onready var cross = get_node("/root/Main/Cross")
-onready var _min: Vector2 = Vector2.ZERO
-onready var _max: Vector2 = Vector2.ZERO
 
 var velocity: Vector2 = Vector2.ZERO
-var speed: float = 120.0  # Pixels per seond
-var rotation_speed: float = 0.5  # Radians per second
+var speed: float = 40.0  # Pixels per seond
+var rotation_speed: float = 0.3  # Radians per second
 
 
 func _physics_process(delta: float) -> void:
@@ -42,10 +40,10 @@ func _physics_process(delta: float) -> void:
 	
 	if speed > player.speed or abs(alpha) < PI * 0.5 and abs(tmp) <= 1.0:
 		beta = asin(tmp)
-		cross.visible = true
+#		cross.visible = true
 	else:
 		beta = asin(sin(alpha))
-		cross.visible = false
+#		cross.visible = false
 
 	if fmod(abs(sight_line.angle() + beta - rotation), PI) >= rotation_speed * delta:
 		rotation = lerp_angle(rotation,
@@ -67,20 +65,13 @@ func _physics_process(delta: float) -> void:
 	if l:
 		proportional_coefficient = position.distance_to(player.position) / l
 	if player.velocity != Vector2.ZERO:
-		cross.position = position + speed * Vector2.RIGHT.rotated(rotation) * proportional_coefficient
+		if abs(speed * proportional_coefficient) > 1000 or proportional_coefficient == 0:
+			cross.position = position + Vector2.RIGHT.rotated(rotation) * 1000
+		else:
+			cross.position = position + Vector2.RIGHT.rotated(rotation) * speed * proportional_coefficient
 	else:
 		cross.position = player.position
 
 	debug_line_1.text = "alpha: " + str(rad2deg(alpha))
 	debug_line_2.text = "beta: " + str(rad2deg(beta))
 	debug_line_3.text = "cross.position: " + str(cross.position)
-	if cross.position.x < _min.x:
-		_min.x = cross.position.x
-	if cross.position.y < _min.y:
-		_min.y = cross.position.y
-	if cross.position.x > _max.x:
-		_max.x = cross.position.x
-	if cross.position.y > _max.y:
-		_max.y = cross.position.y
-	debug_line_4.text = "_min: " + str(_min)
-	debug_line_5.text = "_max: " + str(_max)
