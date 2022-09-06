@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Island.png" type="Texture" id=1]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 515.873
+
+[node name="Island" type="StaticBody2D"]
+scale = Vector2( 0.2, 0.2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -90, 20 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )

@@ -1,7 +1,7 @@
 extends Sprite
 
 var velocity: Vector2 = Vector2.ZERO
-var speed: float = 30.0
+var speed: float = 100.0
 onready var target_point: Vector2 = global_position
 
 

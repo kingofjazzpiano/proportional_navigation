@@ -1,4 +1,4 @@
-extends Sprite
+extends KinematicBody2D
 
 onready var debug_line_1 = get_node("/root/Main/DebugPanel/VBoxContainer/Label1")
 onready var debug_line_2 = get_node("/root/Main/DebugPanel/VBoxContainer/Label2")
@@ -12,17 +12,13 @@ onready var fps_label = get_node("/root/Main/DebugPanel/FPS")
 
 onready var player = get_node("/root/Main/Player")
 onready var cross = get_node("/root/Main/Cross")
-
+onready var _min: Vector2 = Vector2.ZERO
+onready var _max: Vector2 = Vector2.ZERO
 
 var velocity: Vector2 = Vector2.ZERO
-var speed: float = 30.0
-var rotation_speed: float = 0.005
+var speed: float = 120.0  # Pixels per seond
+var rotation_speed: float = 0.5  # Radians per second
 
-
-func _ready() -> void:
-#	print(rad2deg( normalize_angle(deg2rad(-190)) ))
-#	get_tree().quit()
-	pass
 
 func _physics_process(delta: float) -> void:
 	fps_label.text = str(round(1.0 / delta))
@@ -50,23 +46,17 @@ func _physics_process(delta: float) -> void:
 	else:
 		beta = asin(sin(alpha))
 		cross.visible = false
-	
-	if rotation != sight_line.angle() + beta:
+
+	if fmod(abs(sight_line.angle() + beta - rotation), PI) >= rotation_speed * delta:
 		rotation = lerp_angle(rotation,
 			sight_line.angle() + beta,
-			abs(rotation_speed / fmod((sight_line.angle() + beta - rotation), PI)))
+			abs((rotation_speed * delta) /
+			(Vector2.UP.rotated(rotation).angle_to(Vector2.UP.rotated(sight_line.angle() + beta)))))
 
-	
-#	if fmod(rotation, 2 * PI) != fmod(sight_line.angle() + beta, 2 * PI):
-#		rotation -= rotation_speed
 #	rotation = sight_line.angle() + beta
 	position += Vector2.RIGHT.rotated(rotation) * speed * delta
-	debug_line_5.text = "sight_line.angle() + beta: " + str(sight_line.angle() + beta)
-#	debug_line_5.text = "fmod(sight_line.angle() + beta, 2 * PI) + PI: " + str(fmod(sight_line.angle() + beta, 2 * PI) + PI)
-#	debug_line_6.text = "fmod(rotation, 2 * PI): " + str(fmod(rotation, 2 * PI))
-	debug_line_6.text = "rotation: " + str(rotation)
-	debug_line_7.text = "sight_line.angle() + beta - rotation: " + str(sight_line.angle() + beta - rotation)
-	debug_line_8.text = "lerp_angle"
+#	velocity = Vector2.RIGHT.rotated(rotation) * speed
+#	velocity = move_and_slide(velocity, Vector2( 0, 0 ), false, 400)
 	
 	# Set cross
 	var gamma: float =  PI - alpha - beta
@@ -80,17 +70,17 @@ func _physics_process(delta: float) -> void:
 		cross.position = position + speed * Vector2.RIGHT.rotated(rotation) * proportional_coefficient
 	else:
 		cross.position = player.position
-	
+
 	debug_line_1.text = "alpha: " + str(rad2deg(alpha))
 	debug_line_2.text = "beta: " + str(rad2deg(beta))
-	debug_line_3.text = "player.rotation: " + str(rad2deg(player.rotation))
-	debug_line_4.text = "abs(tmp): " + str(abs(tmp))
-
-
-func normalize_angle(theta: float) -> float:
-	"Limits the angle theta from 0 to PI radians."
-	var result = fmod(theta, PI)
-#	if result > PI:
-#		result = 2 * PI - result
-	return result
-	
+	debug_line_3.text = "cross.position: " + str(cross.position)
+	if cross.position.x < _min.x:
+		_min.x = cross.position.x
+	if cross.position.y < _min.y:
+		_min.y = cross.position.y
+	if cross.position.x > _max.x:
+		_max.x = cross.position.x
+	if cross.position.y > _max.y:
+		_max.y = cross.position.y
+	debug_line_4.text = "_min: " + str(_min)
+	debug_line_5.text = "_max: " + str(_max)
