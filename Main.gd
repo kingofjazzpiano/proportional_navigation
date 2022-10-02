@@ -4,6 +4,7 @@ onready var navigation = $Navigation2D/NavigationPolygonInstance
 onready var missile = $Missile
 onready var debug_panel = $DebugPanel
 
+
 func _ready() -> void:
 	var islands = find_node("Islands")
 	
@@ -34,3 +35,4 @@ func _physics_process(delta: float) -> void:
 		missile.cross.visible = not missile.cross.visible
 		$Line2D.visible = not $Line2D.visible
 		debug_panel.visible = not debug_panel.visible
+		missile.probe.visible = not missile.probe.visible

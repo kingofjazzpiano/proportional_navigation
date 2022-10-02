@@ -30,11 +30,11 @@ stretch_mode = 2
 
 [node name="Player" parent="." instance=ExtResource( 2 )]
 pause_mode = 1
-position = Vector2( 196, 876 )
+position = Vector2( -748, -11 )
 
 [node name="Missile" parent="." instance=ExtResource( 3 )]
 pause_mode = 1
-position = Vector2( -182, -194 )
+position = Vector2( -1689, -570 )
 
 [node name="DebugPanel" parent="." instance=ExtResource( 4 )]
 
