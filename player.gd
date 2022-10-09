@@ -1,5 +1,7 @@
 extends Sprite
 
+onready var smoke_scene: Resource  = preload("res://Smoke.tscn")
+
 const DEAD_ZONE_LIMIT = 50
 
 var direction: Vector2 = Vector2.ZERO
@@ -13,12 +15,17 @@ var current_rotation_speed: float = 0.0 # текущяя скорость вра
 
 
 func _physics_process(delta: float) -> void:
-	direction = Vector2.ZERO
 	calculate_speed()
 	calculate_rotation(delta)
 	
 	direction = Vector2.RIGHT.rotated(rotation)
 	position += direction * speed * delta
+	
+	if Input.is_action_just_pressed("Space"):
+		var smoke: Node = smoke_scene.instance()
+		smoke.set_emitting(true)
+		add_child(smoke)
+#		smoke.wEmiting = true
 
 
 func calculate_speed() -> void:
